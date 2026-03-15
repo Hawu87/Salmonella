@@ -1,19 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import Container from "@/components/Container";
 import Divider from "@/components/Divider";
 import VerticalNav from "@/components/VerticalNav";
 
 function Cite({ id }: { id: string }) {
-  const num = id.replace("ref", "");
   return (
     <a
       href={`/references#${id}`}
       className="text-[#0F766E] hover:underline"
-      title={`Reference ${num}`}
+      title={`Reference ${id}`}
     >
-      [{num}]
+      [{id.replace("ref", "")}]
     </a>
   );
 }
@@ -24,11 +24,11 @@ const SECTIONS = [
     content: (
       <>
         <p>
-          Salmonella is a genus of Gram-negative, rod-shaped bacteria
-          responsible for salmonellosis, one of the most common foodborne
-          infections worldwide <Cite id="ref1" /> <Cite id="ref2" />. The bacteria
-          are typically transmitted through contaminated food or water and can
-          infect both humans and animals.
+          Salmonella is a genus of Gram-negative, rod-shaped bacteria responsible
+          for salmonellosis, one of the most common foodborne infections
+          worldwide <Cite id="ref1" />
+          <Cite id="ref2" />. The bacteria are typically transmitted through
+          contaminated food or water and can infect both humans and animals.
         </p>
         <p>
           More than 2,500 Salmonella serotypes have been identified, with many
@@ -45,7 +45,8 @@ const SECTIONS = [
           <p className="mt-2 text-sm text-[#111827]">
             Salmonella is a diverse group of bacteria mainly spread through
             contaminated food or water, causing millions of infections worldwide
-            each year <Cite id="ref1" /> <Cite id="ref2" />.
+            each year <Cite id="ref1" />
+            <Cite id="ref2" />.
           </p>
         </div>
       </>
@@ -56,39 +57,29 @@ const SECTIONS = [
     content: (
       <>
         <p>
-          Infection typically begins when contaminated food or water is
-          ingested. After entering the digestive system, Salmonella bacteria
-          reach the intestinal tract where they attach to and invade epithelial
-          cells lining the intestine <Cite id="ref1" />.
+          Infection typically begins when contaminated food or water is ingested.
+          After entering the digestive system, Salmonella bacteria reach the
+          intestinal tract where they attach to and invade epithelial cells
+          lining the intestine <Cite id="ref1" />.
         </p>
         <p>
-          The invasion process is mediated by specialized genetic regions
-          called Salmonella pathogenicity islands. These regions encode a type
-          III secretion system that allows the bacterium to inject proteins into
+          The invasion process is mediated by specialized genetic regions called
+          Salmonella pathogenicity islands. These regions encode a type III
+          secretion system that allows the bacterium to inject proteins into
           host cells and trigger its own uptake <Cite id="ref1" />.
         </p>
         <p>
           Once inside the host cell, Salmonella can survive within a
           membrane-bound compartment called the Salmonella-containing vacuole,
           which helps protect the bacteria from immune defenses while it
-          replicates <Cite id="ref1" /> <Cite id="ref2" />.
+          replicates <Cite id="ref1" />
+          <Cite id="ref2" />.
         </p>
         <p>
           Food products such as poultry remain a common source of contamination,
           and research shows antimicrobial interventions can significantly reduce
           Salmonella levels in chicken products <Cite id="ref3" />.
         </p>
-        <div className="my-8">
-          <img
-            src="/infection-process.png"
-            alt="Illustration of the Salmonella infection process"
-            className="mx-auto w-full max-w-3xl rounded-md"
-          />
-          <p className="mt-3 text-xs text-[#6B7280]">
-            Figure 1. Illustration of the Salmonella infection process. Image
-            generated using OpenAI DALL·E.
-          </p>
-        </div>
         <div className="mt-8 border-l-4 border-[#0F766E] pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
@@ -108,8 +99,8 @@ const SECTIONS = [
       <>
         <p>
           Symptoms of salmonellosis vary depending on the type of infection.
-          Non-typhoidal Salmonella infections commonly cause diarrhea,
-          abdominal cramps, fever, nausea, and sometimes vomiting <Cite id="ref2" />.
+          Non-typhoidal Salmonella infections commonly cause diarrhea, abdominal
+          cramps, fever, nausea, and sometimes vomiting <Cite id="ref2" />.
         </p>
         <p>
           Symptoms typically appear within hours to a few days after exposure.
@@ -140,10 +131,9 @@ const SECTIONS = [
     content: (
       <>
         <p>
-          Although Salmonella infection can affect anyone, certain populations
-          are more vulnerable to severe disease. These include young children,
-          older adults, and individuals with weakened immune systems{" "}
-          <Cite id="ref2" />.
+          Although Salmonella infection can affect anyone, certain populations are
+          more vulnerable to severe disease. These include young children, older
+          adults, and individuals with weakened immune systems <Cite id="ref2" />.
         </p>
         <p>
           Reduced stomach acidity, underlying illness, and exposure to

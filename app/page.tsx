@@ -16,19 +16,19 @@ const STRUCTURE_BLOCKS = [
   {
     title: "Biology",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "Learn the core biology of Salmonella, including how it infects hosts, causes disease, and affects different populations.",
     href: "/biology",
   },
   {
     title: "Visualizations",
     description:
-      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "Explore visual explanations of infection pathways, bacterial behavior, and patterns observed in Salmonella research.",
     href: "/visualizations",
   },
   {
     title: "References",
     description:
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "Browse the scientific sources used throughout the website, with direct links to the original research articles.",
     href: "/references",
   },
 ];
@@ -64,7 +64,9 @@ export default function Home() {
           </div>
         </section>
 
-        <Divider />
+        <div className="mt-12">
+          <Divider />
+        </div>
 
         <section className="grid gap-10 pt-14 lg:grid-cols-[auto_1fr] lg:gap-16">
           <SectionNumber number="02" />

@@ -5,7 +5,51 @@ import ReferenceItem from "@/components/ReferenceItem";
 const MAYO_URL =
   "https://www.mayoclinic.org/diseases-conditions/salmonella/symptoms-causes/syc-20355329";
 
+const REF1_URL =
+  "https://www.sciencedirect.com/science/article/pii/S2772416624000081";
+const REF2_URL = "https://pmc.ncbi.nlm.nih.gov/articles/PMC8057844/";
+const REF3_URL =
+  "https://www.sciencedirect.com/science/article/pii/S0032579119314324";
+
 const REFERENCES = [
+  {
+    id: "ref1",
+    title:
+      "Salmonella in the environment: A review on ecology, antimicrobial resistance, seafood contaminations, and human health implications",
+    source: "Journal of Hazardous Materials Advances",
+    link: REF1_URL,
+    description:
+      "Review of Salmonella ecology, antimicrobial resistance, and implications for human health and seafood safety.",
+    notes: [
+      "Covers environmental persistence and transmission pathways.",
+      "Discusses pathogenicity islands and invasion mechanisms.",
+    ],
+  },
+  {
+    id: "ref2",
+    title: "Salmonella spp. infection – a continuous threat worldwide",
+    source: "GERMS",
+    link: REF2_URL,
+    description:
+      "Overview of Salmonella as a global health threat, serotypes, clinical presentation, and risk groups.",
+    notes: [
+      "Distinguishes non-typhoidal and typhoidal Salmonella.",
+      "Describes symptoms, timeline, and vulnerable populations.",
+    ],
+  },
+  {
+    id: "ref3",
+    title:
+      "Evaluation of USDA approved antimicrobials on the reduction of Salmonella and Campylobacter in ground chicken frames and their effect on meat quality",
+    source: "Poultry Science",
+    link: REF3_URL,
+    description:
+      "Research on antimicrobial interventions to reduce Salmonella in poultry products.",
+    notes: [
+      "Evaluates interventions in chicken processing.",
+      "Discusses impact on meat quality.",
+    ],
+  },
   {
     id: "ref-SAL-001",
     title: "Salmonella (Symptoms & causes)",
@@ -16,41 +60,6 @@ const REFERENCES = [
       "Covers incubation period and common symptoms.",
       "Describes foodborne and waterborne transmission.",
       "Includes when to seek medical care.",
-    ],
-  },
-  {
-    id: "ref-SAL-002",
-    title: "Bacterial foodborne pathogens overview",
-    source: "Placeholder source",
-    link: "#",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    notes: [
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-      "Ut enim ad minim veniam quis nostrud exercitation.",
-    ],
-  },
-  {
-    id: "ref-SAL-003",
-    title: "High-risk populations and surveillance",
-    source: "Placeholder source",
-    link: "#",
-    description:
-      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    notes: [
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse.",
-      "Excepteur sint occaecat cupidatat non proident.",
-    ],
-  },
-  {
-    id: "ref-SAL-004",
-    title: "Food safety and prevention guidelines",
-    source: "Placeholder source",
-    link: "#",
-    description:
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    notes: [
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod.",
     ],
   },
 ];

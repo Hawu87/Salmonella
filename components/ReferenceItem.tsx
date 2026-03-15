@@ -35,6 +35,8 @@ export default function ReferenceItem({
           <p className="mt-1 text-sm text-[#6B7280]">{source}</p>
           <a
             href={link}
+            target={link.startsWith("http") ? "_blank" : undefined}
+            rel={link.startsWith("http") ? "noopener noreferrer" : undefined}
             className="mt-2 inline-block text-sm text-[#0F766E] hover:underline"
           >
             {link.startsWith("http") ? "View source" : link}

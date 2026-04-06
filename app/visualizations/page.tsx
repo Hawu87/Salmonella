@@ -15,12 +15,31 @@ export default function VisualizationsPage() {
               Visualizations
             </h1>
             <p className="mt-4 text-[#6B7280] max-w-2xl leading-relaxed">
-              Interactive visualizations of virulence gene data across host
-              associations and bacterial species. Explore gene prevalence,
-              functional distribution, co-occurrence networks, and more.
+              Interactive visualizations exploring virulence gene data across
+              host associations, bacterial species, and functional categories.
+              The current dataset covers <strong>Campylobacter jejuni</strong>,{" "}
+              <strong>C. coli</strong>, and <strong>Salmonella typhi</strong>,
+              enabling cross-species comparisons of gene prevalence and
+              distribution.
             </p>
           </div>
         </section>
+
+        {/* Scope legend */}
+        <div className="mb-10 flex flex-wrap gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#1D4ED8]" />
+            Campylobacter-focused
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#0F766E]" />
+            Salmonella-focused
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#7C3AED]" />
+            Cross-species / comparative
+          </span>
+        </div>
 
         <VirulenceDashboard />
       </Container>

@@ -23,7 +23,7 @@ export default function TopNav() {
           href="/"
           className="text-lg font-semibold text-[#111827] hover:text-[#0F766E]"
         >
-          Salmonella Research
+          Pathogen Virulence Explorer
         </Link>
         <ul className="flex flex-wrap items-center gap-8">
           {NAV_LINKS.map(({ href, label }) => {

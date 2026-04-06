@@ -1,11 +1,19 @@
 "use client";
 
-export const BIOLOGY_SECTIONS = [
-  { id: 0, number: "01", label: "What is Salmonella" },
-  { id: 1, number: "02", label: "Infection process" },
-  { id: 2, number: "03", label: "Symptoms timeline" },
-  { id: 3, number: "04", label: "Risk groups" },
-] as const;
+export interface BiologySection {
+  id: number;
+  number: string;
+  label: string;
+}
+
+export const BIOLOGY_SECTIONS: BiologySection[] = [
+  { id: 0, number: "01", label: "Overview" },
+  { id: 1, number: "02", label: "Salmonella" },
+  { id: 2, number: "03", label: "Infection (Salmonella)" },
+  { id: 3, number: "04", label: "Campylobacter" },
+  { id: 4, number: "05", label: "Virulence (Campylobacter)" },
+  { id: 5, number: "06", label: "Risk Groups" },
+];
 
 interface VerticalNavProps {
   activeId: number;

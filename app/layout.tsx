@@ -10,8 +10,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Salmonella Research",
-  description: "A structured knowledge base for biology and visualizations.",
+  title: "Pathogen Virulence Explorer",
+  description:
+    "A comparative research platform for exploring virulence biology, gene expression, and host associations across Salmonella and Campylobacter.",
 };
 
 export default function RootLayout({

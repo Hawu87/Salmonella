@@ -14,7 +14,7 @@ interface SpeciesBarChartProps {
 }
 
 export default function SpeciesBarChart({ topN = 20, showPercent = false }: SpeciesBarChartProps) {
-  const { data, loading, error, getTopGenes } = useVirulenceData();
+  const { data, loading, error } = useVirulenceData();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -27,36 +27,51 @@ export default function SpeciesBarChart({ topN = 20, showPercent = false }: Spec
   if (loading) return <div className="text-center py-8 text-gray-500">Loading chart...</div>;
   if (error || !data) return <div className="text-center py-8 text-red-600">Error: {error || 'No data available'}</div>;
 
-  const selectedGenes = getTopGenes(topN);
+  const geneOccurrences: Record<string, number> = {};
+  data.genes.forEach(g => {
+    geneOccurrences[g.geneName] = (geneOccurrences[g.geneName] || 0) + 1;
+  });
+  const allSorted = Object.entries(geneOccurrences)
+    .sort(([, a], [, b]) => b - a)
+    .map(([gene]) => gene);
+  const selectedGenes = topN >= allSorted.length ? allSorted : allSorted.slice(0, topN);
+
   if (selectedGenes.length === 0) return <div className="text-center py-8 text-gray-500">No gene data available</div>;
 
   const jejuniCounts: number[] = [];
   const coliCounts: number[] = [];
+  const typhiCounts: number[] = [];
   let totalJejuni = 0;
   let totalColi = 0;
+  let totalTyphi = 0;
 
   selectedGenes.forEach(gene => {
-    let jc = 0, cc = 0;
+    let jc = 0, cc = 0, tc = 0;
     data.genes.forEach(g => {
       if (g.geneName === gene) {
         if (g.species.includes('jejuni')) jc++;
         if (g.species.includes('coli')) cc++;
+        if (g.species.includes('salmonella_typhi')) tc++;
       }
     });
     jejuniCounts.push(jc);
     coliCounts.push(cc);
+    typhiCounts.push(tc);
     totalJejuni += jc;
     totalColi += cc;
+    totalTyphi += tc;
   });
 
   const jejuniData = showPercent && totalJejuni > 0 ? jejuniCounts.map(c => Math.round((c / totalJejuni) * 10000) / 100) : jejuniCounts;
   const coliData = showPercent && totalColi > 0 ? coliCounts.map(c => Math.round((c / totalColi) * 10000) / 100) : coliCounts;
+  const typhiData = showPercent && totalTyphi > 0 ? typhiCounts.map(c => Math.round((c / totalTyphi) * 10000) / 100) : typhiCounts;
 
   const chartData = {
     labels: selectedGenes,
     datasets: [
       { label: 'C. jejuni', data: jejuniData, backgroundColor: 'rgba(59, 130, 246, 0.8)' },
       { label: 'C. coli', data: coliData, backgroundColor: 'rgba(239, 68, 68, 0.8)' },
+      { label: 'S. typhi', data: typhiData, backgroundColor: 'rgba(15, 118, 110, 0.8)' },
     ],
   };
 

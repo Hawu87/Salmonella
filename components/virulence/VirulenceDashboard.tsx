@@ -9,12 +9,9 @@ const Matrix = dynamic(() => import('@/components/virulence/charts/Matrix'), { s
 const CooccurrenceNetwork = dynamic(() => import('@/components/virulence/charts/CooccurrenceNetwork'), { ssr: false });
 const FunctionPie = dynamic(() => import('@/components/virulence/charts/FunctionPie'), { ssr: false });
 const GeneFunctionSunburst = dynamic(() => import('@/components/virulence/charts/GeneFunctionSunburst'), { ssr: false });
-const Heatmap = dynamic(() => import('@/components/virulence/charts/Heatmap'), { ssr: false });
 const Sankey = dynamic(() => import('@/components/virulence/charts/Sankey'), { ssr: false });
 const SpeciesBarChart = dynamic(() => import('@/components/virulence/charts/SpeciesBarChart'), { ssr: false });
 const Sunburst = dynamic(() => import('@/components/virulence/charts/Sunburst'), { ssr: false });
-const VariabilityPlot = dynamic(() => import('@/components/virulence/charts/VariabilityPlot'), { ssr: false });
-const FunctionalContext = dynamic(() => import('@/components/virulence/charts/FunctionalContext'), { ssr: false });
 const GeneProfiles = dynamic(() => import('@/components/virulence/charts/GeneProfiles'), { ssr: false });
 
 function VizCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
@@ -49,9 +46,9 @@ export default function VirulenceDashboard() {
 
         <VizCard
           title="Gene Counts by Species"
-          description="Comparison of gene occurrences between C. jejuni and C. coli across the dataset."
+          description="Comparison of gene occurrences across C. jejuni, C. coli, and Salmonella typhi."
         >
-          <SpeciesBarChart topN={TOP_N} showPercent={false} />
+          <SpeciesBarChart topN={50} showPercent={false} />
         </VizCard>
 
         <VizCard
@@ -66,13 +63,6 @@ export default function VirulenceDashboard() {
           description="Hierarchical sunburst showing virulence genes organized by functional category. Click to zoom into categories."
         >
           <GeneFunctionSunburst />
-        </VizCard>
-
-        <VizCard
-          title="Gene Prevalence Heatmap"
-          description="Heatmap showing gene prevalence (%) across different host associations. Brighter colors indicate higher prevalence."
-        >
-          <Heatmap />
         </VizCard>
 
         <VizCard
@@ -94,20 +84,6 @@ export default function VirulenceDashboard() {
           description="Interactive network graph showing which virulence genes are found together in the same isolates. Node size reflects frequency, link thickness reflects co-occurrence strength."
         >
           <CooccurrenceNetwork />
-        </VizCard>
-
-        <VizCard
-          title="Gene Prevalence Variability"
-          description="Stability plot showing how variable each gene's prevalence is across hosts and species. Low variability genes are conserved, high variability genes are host-adaptive."
-        >
-          <VariabilityPlot />
-        </VizCard>
-
-        <VizCard
-          title="Functional Context"
-          description="Genes grouped by their functional role in virulence. Hover over a gene to see its annotation."
-        >
-          <FunctionalContext />
         </VizCard>
 
         <VizCard

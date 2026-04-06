@@ -45,10 +45,10 @@ export default function VirulenceDashboard() {
         </VizCard>
 
         <VizCard
-          title="Gene Counts by Species"
-          description="Comparison of gene occurrences across C. jejuni, C. coli, and Salmonella typhi."
+          title="Gene Function Sunburst"
+          description="Hierarchical sunburst showing virulence genes organized by functional category. Click to zoom into categories."
         >
-          <SpeciesBarChart topN={50} showPercent={false} />
+          <GeneFunctionSunburst />
         </VizCard>
 
         <VizCard
@@ -56,13 +56,6 @@ export default function VirulenceDashboard() {
           description="Pie chart showing the proportion of virulence genes grouped by functional category."
         >
           <FunctionPie />
-        </VizCard>
-
-        <VizCard
-          title="Gene Function Sunburst"
-          description="Hierarchical sunburst showing virulence genes organized by functional category. Click to zoom into categories."
-        >
-          <GeneFunctionSunburst />
         </VizCard>
 
         <VizCard
@@ -91,6 +84,13 @@ export default function VirulenceDashboard() {
           description="Expandable list of virulence genes organized by biological process. Click any gene for detailed information."
         >
           <GeneProfiles />
+        </VizCard>
+
+        <VizCard
+          title="Gene Counts by Species"
+          description="Comparison of gene occurrences across C. jejuni, C. coli, and Salmonella typhi."
+        >
+          <SpeciesBarChart topN={50} showPercent={false} />
         </VizCard>
 
         <VizSourceFooter />

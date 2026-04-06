@@ -1,45 +1,8 @@
+'use client';
+
 import Container from "@/components/Container";
 import SectionNumber from "@/components/SectionNumber";
-import FigureBlock from "@/components/FigureBlock";
-
-const FIGURES = [
-  {
-    label: "Figure 01",
-    title: "Transmission pathways",
-    caption:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-  },
-  {
-    label: "Figure 02",
-    title: "Symptom onset timeline",
-    caption:
-      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip.",
-  },
-  {
-    label: "Figure 03",
-    title: "Symptom distribution",
-    caption:
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.",
-  },
-  {
-    label: "Figure 04",
-    title: "Risk group breakdown",
-    caption:
-      "Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia.",
-  },
-  {
-    label: "Figure 05",
-    title: "Source attribution",
-    caption:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.",
-  },
-  {
-    label: "Figure 06",
-    title: "Prevention overview",
-    caption:
-      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris.",
-  },
-];
+import VirulenceDashboard from "@/components/virulence/VirulenceDashboard";
 
 export default function VisualizationsPage() {
   return (
@@ -51,19 +14,15 @@ export default function VisualizationsPage() {
             <h1 className="text-3xl font-bold text-[#111827] lg:text-4xl">
               Visualizations
             </h1>
+            <p className="mt-4 text-[#6B7280] max-w-2xl leading-relaxed">
+              Interactive visualizations of virulence gene data across host
+              associations and bacterial species. Explore gene prevalence,
+              functional distribution, co-occurrence networks, and more.
+            </p>
           </div>
         </section>
 
-        <div className="max-w-3xl">
-          {FIGURES.map((fig) => (
-            <FigureBlock
-              key={fig.label}
-              label={fig.label}
-              title={fig.title}
-              caption={fig.caption}
-            />
-          ))}
-        </div>
+        <VirulenceDashboard />
       </Container>
     </div>
   );

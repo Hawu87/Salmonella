@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { VirulenceDataProvider } from '@/components/virulence/shared/VirulenceDataProvider';
-import ControlPanel from '@/components/virulence/shared/ControlPanel';
 import VizSourceFooter from '@/components/virulence/shared/VizSourceFooter';
 
 const BarChart = dynamic(() => import('@/components/virulence/charts/BarChart'), { ssr: false });
@@ -29,21 +27,12 @@ function VizCard({ title, description, children }: { title: string; description:
   );
 }
 
-export default function VirulenceDashboard() {
-  const [topN, setTopN] = useState(20);
-  const [showPercent, setShowPercent] = useState(false);
+const TOP_N = 20;
 
+export default function VirulenceDashboard() {
   return (
     <VirulenceDataProvider>
       <div className="space-y-8">
-        <ControlPanel
-          topN={topN}
-          showPercent={showPercent}
-          onTopNChange={setTopN}
-          onShowPercentChange={setShowPercent}
-          onResetFilters={() => { setTopN(20); setShowPercent(false); }}
-        />
-
         <VizCard
           title="Gene Virulence by Host Association"
           description="Bar chart comparing prevalence of key virulence genes across host categories (food animals vs. humans)."
@@ -62,7 +51,7 @@ export default function VirulenceDashboard() {
           title="Gene Counts by Species"
           description="Comparison of gene occurrences between C. jejuni and C. coli across the dataset."
         >
-          <SpeciesBarChart topN={topN} showPercent={showPercent} />
+          <SpeciesBarChart topN={TOP_N} showPercent={false} />
         </VizCard>
 
         <VizCard
@@ -90,7 +79,7 @@ export default function VirulenceDashboard() {
           title="Host–Gene Sankey Diagram"
           description="Flow diagram showing how the top genes distribute across host categories. Connection thickness represents isolate count."
         >
-          <Sankey topK={topN} />
+          <Sankey topK={TOP_N} />
         </VizCard>
 
         <VizCard

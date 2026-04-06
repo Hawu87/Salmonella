@@ -5,6 +5,8 @@
   --text: #111827;
   --muted: #6b7280;
   --accent: #0f766e;
+  --primary: #0f766e;
+  --secondary: #2563eb;
 }
 
 @theme inline {
@@ -12,6 +14,8 @@
   --color-text: var(--text);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

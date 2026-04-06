@@ -21,7 +21,7 @@ export default function TopNav() {
       >
         <Link
           href="/"
-          className="text-lg font-semibold text-[#111827] hover:text-[#0F766E]"
+          className="text-lg font-semibold text-[#111827] hover:text-primary transition-colors"
         >
           Pathogen Virulence Explorer
         </Link>
@@ -35,7 +35,7 @@ export default function TopNav() {
                   href={href}
                   className={`border-b-2 pb-1 text-sm font-medium transition-colors ${
                     isActive
-                      ? "border-[#0F766E] text-[#111827]"
+                      ? "border-primary text-[#111827]"
                       : "border-transparent text-[#6B7280] hover:text-[#111827]"
                   }`}
                   aria-current={isActive ? "page" : undefined}

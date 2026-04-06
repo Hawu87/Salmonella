@@ -153,7 +153,7 @@ export default function ReferenceList() {
                   <p className="mt-1 text-sm text-[#6B7280]">{ref.source}</p>
                   <a
                     href={ref.link}
-                    className="mt-2 inline-block text-sm text-[#0F766E] hover:underline"
+                    className="mt-2 inline-block text-sm text-primary hover:underline"
                   >
                     {ref.link === "#" ? "Link (placeholder)" : "View source"}
                   </a>

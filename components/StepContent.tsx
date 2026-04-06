@@ -11,7 +11,7 @@ const MAYO_PARAGRAPH_2 =
 
 const STEP_CONTENT = [
   {
-    title: "What is Salmonella?",
+    title: "What is Salmonella typhi?",
     paragraphs: [MAYO_PARAGRAPH_1, MAYO_PARAGRAPH_2],
     keyPoint:
       "Salmonellosis is a bacterial infection of the gut, usually spread by contaminated food or water.",
@@ -79,8 +79,8 @@ export default function StepContent({
             <p key={i}>{p}</p>
           ))}
         </div>
-        <div className="mt-6 border-l-4 border-[#0F766E] bg-[#ECFDF5] px-4 py-3">
-          <p className="text-sm font-semibold text-[#0F766E]">Key point</p>
+        <div className="mt-6 border-l-4 border-primary bg-[#ECFDF5] px-4 py-3">
+          <p className="text-sm font-semibold text-primary">Key point</p>
           <p className="mt-1 text-sm text-[#111827]">{step.keyPoint}</p>
         </div>
         <p className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#6B7280]">
@@ -97,7 +97,7 @@ export default function StepContent({
           type="button"
           onClick={onBack}
           disabled={isFirst}
-          className="rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#111827] transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:border-[#0F766E] hover:text-[#0F766E]"
+          className="rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#111827] transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:border-primary hover:text-primary"
         >
           Back
         </button>
@@ -105,7 +105,7 @@ export default function StepContent({
           type="button"
           onClick={onNext}
           disabled={isLast}
-          className="rounded-lg bg-[#0F766E] px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[#0D5F58]"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[#0D5F58]"
         >
           Next
         </button>

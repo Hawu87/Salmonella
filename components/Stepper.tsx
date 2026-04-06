@@ -1,7 +1,7 @@
 "use client";
 
 const STEPS = [
-  "What is Salmonella?",
+  "What is Salmonella typhi?",
   "How infection happens",
   "Symptoms & timing",
   "Who is at risk?",
@@ -32,8 +32,8 @@ export default function Stepper({ currentStep, onStepChange }: StepperProps) {
             onClick={() => onStepChange(index)}
             className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
-                ? "border-[#0F766E]/30 bg-[#ECFDF5] text-[#0F766E]"
-                : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#0F766E]/20 hover:text-[#111827]"
+                ? "border-primary/30 bg-[#ECFDF5] text-primary"
+                : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-primary/20 hover:text-[#111827]"
             }`}
           >
             {label}

@@ -37,7 +37,7 @@ export default function ReferenceItem({
             href={link}
             target={link.startsWith("http") ? "_blank" : undefined}
             rel={link.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="mt-2 inline-block text-sm text-[#0F766E] hover:underline"
+            className="mt-2 inline-block text-sm text-primary hover:underline"
           >
             {link.startsWith("http") ? "View source" : link}
           </a>
@@ -47,7 +47,7 @@ export default function ReferenceItem({
               <button
                 type="button"
                 onClick={() => setExpanded(!expanded)}
-                className="text-sm font-medium text-[#0F766E] hover:underline"
+                className="text-sm font-medium text-primary hover:underline"
                 aria-expanded={expanded}
               >
                 {expanded ? "Hide notes" : "Show notes"}

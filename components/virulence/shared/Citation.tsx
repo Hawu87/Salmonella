@@ -14,7 +14,7 @@ export default function Citation({ number, className = '' }: CitationProps) {
   return (
     <a
       href={`#${refItem.id}`}
-      className={`text-teal-700 hover:text-teal-800 hover:underline transition ${className}`}
+      className={`text-primary hover:opacity-80 hover:underline transition ${className}`}
       aria-label={`Reference ${number}`}
     >
       [{number}]

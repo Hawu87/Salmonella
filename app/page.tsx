@@ -27,17 +27,17 @@ const STRUCTURE_BLOCKS = [
 const ORGANISMS = [
   {
     name: "Salmonella",
-    scientific: "Salmonella enterica",
+    scientific: "Salmonella typhi",
     summary:
-      "A genus of Gram-negative bacteria responsible for salmonellosis, one of the most common foodborne infections worldwide. With over 2,500 serotypes, Salmonella infections range from self-limiting gastroenteritis to severe systemic disease.",
-    accent: "#0F766E",
+      "The causative agent of typhoid fever, a severe systemic infection transmitted through contaminated food and water. As a member of the broader Salmonella genus, S. typhi is studied for its specialized virulence mechanisms and host-adapted pathogenicity.",
+    accent: "var(--primary)",
   },
   {
     name: "Campylobacter",
     scientific: "Campylobacter jejuni / C. coli",
     summary:
       "The leading cause of bacterial gastroenteritis globally. Campylobacter jejuni and Campylobacter coli are commonly profiled for their virulence-associated genes, which play roles in adhesion, invasion, toxin production, and environmental persistence.",
-    accent: "#1D4ED8",
+    accent: "var(--secondary)",
   },
 ];
 
@@ -48,7 +48,7 @@ export default function Home() {
         {/* Hero */}
         <section>
           <h1 className="text-3xl font-bold text-[#111827] lg:text-4xl">
-            Pathogen Virulence Explorer
+            Pathogen <span className="text-primary">Virulence</span> Explorer
           </h1>
           <p className="mt-3 text-[#6B7280] lg:text-lg max-w-2xl">
             A comparative research platform for exploring virulence biology,
@@ -58,7 +58,7 @@ export default function Home() {
             <p>
               This platform brings together structured biology, interactive
               visualizations, and curated references for two major foodborne
-              pathogens: <strong>Salmonella</strong> and{" "}
+              pathogens: <strong>Salmonella typhi</strong> and{" "}
               <strong>Campylobacter</strong>. It supports comparative analysis
               of virulence-associated genes across species and host
               environments.
@@ -85,7 +85,8 @@ export default function Home() {
             {ORGANISMS.map((org) => (
               <div
                 key={org.name}
-                className="rounded-lg border border-[#E5E7EB] p-6"
+                className="rounded-lg border border-[#E5E7EB] border-l-4 p-6"
+                style={{ borderLeftColor: org.accent }}
               >
                 <div className="flex items-center gap-3 mb-3">
                   <span
@@ -121,7 +122,7 @@ export default function Home() {
               <div key={href}>
                 <Link
                   href={href}
-                  className="text-lg font-semibold text-[#111827] hover:underline"
+                  className="text-lg font-semibold text-[#111827] hover:text-primary transition-colors"
                 >
                   {title}
                 </Link>
@@ -178,9 +179,9 @@ export default function Home() {
               <em>Salmonella</em> and <em>Campylobacter</em> species through
               interactive charts and structured biology content.
             </p>
-            <p className="text-sm text-[#6B7280] italic">
+            {/* <p className="text-sm text-[#6B7280] italic">
               Funding: Supported by grant (Grant ID: GRANT-XXXX).
-            </p>
+            </p> */}
           </div>
         </section>
       </Container>

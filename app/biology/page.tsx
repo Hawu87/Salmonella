@@ -10,7 +10,7 @@ function Cite({ id }: { id: string }) {
   return (
     <a
       href={`/references#${id}`}
-      className="text-[#0F766E] hover:underline"
+      className="text-primary hover:underline"
       title={`Reference ${num}`}
     >
       [{num}]
@@ -25,7 +25,7 @@ const SECTIONS = [
       <>
         <p>
           This section covers the biology of two major foodborne bacterial
-          pathogens: <strong>Salmonella</strong> and{" "}
+          pathogens: <strong>Salmonella typhi</strong> and{" "}
           <strong>Campylobacter</strong>. Both are leading causes of bacterial
           gastroenteritis worldwide and are commonly studied for their
           virulence-associated genes.
@@ -37,7 +37,7 @@ const SECTIONS = [
           Understanding these differences is central to comparative pathogen
           research.
         </p>
-        <div className="mt-8 border-l-4 border-[#0F766E] pl-4">
+        <div className="mt-8 border-l-4 border-primary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -51,7 +51,7 @@ const SECTIONS = [
     ),
   },
   {
-    title: "What is Salmonella",
+    title: "What is Salmonella typhi",
     content: (
       <>
         <p>
@@ -69,7 +69,7 @@ const SECTIONS = [
           illness, and typhoidal Salmonella, which causes enteric fever and more
           severe systemic disease <Cite id="ref2" />.
         </p>
-        <div className="mt-8 border-l-4 border-[#0F766E] pl-4">
+        <div className="mt-8 border-l-4 border-primary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -83,7 +83,7 @@ const SECTIONS = [
     ),
   },
   {
-    title: "Infection Process (Salmonella)",
+    title: "Infection Process (S. typhi)",
     content: (
       <>
         <p>
@@ -120,7 +120,7 @@ const SECTIONS = [
             generated using OpenAI DALL·E.
           </p>
         </div>
-        <div className="mt-8 border-l-4 border-[#0F766E] pl-4">
+        <div className="mt-8 border-l-4 border-primary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -168,7 +168,7 @@ const SECTIONS = [
             for human Campylobacteriosis <Cite id="ref-CAM-001" />.
           </p>
         </div>
-        <div className="mt-8 border-l-4 border-[#1D4ED8] pl-4">
+        <div className="mt-8 border-l-4 border-secondary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -213,7 +213,7 @@ const SECTIONS = [
           environments, making comparative analysis essential for understanding
           pathogenicity patterns <Cite id="ref-CAM-003" />.
         </p>
-        <div className="mt-8 border-l-4 border-[#1D4ED8] pl-4">
+        <div className="mt-8 border-l-4 border-secondary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -249,7 +249,7 @@ const SECTIONS = [
           nervous system — are a recognized risk following Campylobacter
           infection <Cite id="ref-CAM-001" />.
         </p>
-        <div className="mt-8 border-l-4 border-[#0F766E] pl-4">
+        <div className="mt-8 border-l-4 border-primary pl-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#6B7280]">
             Key point
           </p>
@@ -286,7 +286,7 @@ export default function BiologyPage() {
                 <button
                   type="button"
                   onClick={() => setActiveId((n) => Math.max(0, n - 1))}
-                  className="text-sm font-medium text-[#0F766E] hover:underline"
+                  className="text-sm font-medium text-primary hover:underline"
                 >
                   Previous
                 </button>
@@ -297,7 +297,7 @@ export default function BiologyPage() {
                   onClick={() =>
                     setActiveId((n) => Math.min(SECTIONS.length - 1, n + 1))
                   }
-                  className="text-sm font-medium text-[#0F766E] hover:underline"
+                  className="text-sm font-medium text-primary hover:underline"
                 >
                   Next
                 </button>

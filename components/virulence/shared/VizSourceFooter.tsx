@@ -11,7 +11,7 @@ export default function VizSourceFooter() {
           href={SUMMARY_DOC_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-teal-700 hover:underline hover:text-teal-800 transition"
+          className="text-primary hover:underline hover:opacity-80 transition"
         >
           Gene Summary Document
         </a>
@@ -22,7 +22,7 @@ export default function VizSourceFooter() {
           href={NCBI_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-teal-700 hover:underline hover:text-teal-800 transition"
+          className="text-primary hover:underline hover:opacity-80 transition"
         >
           NCBI
         </a>{' '}

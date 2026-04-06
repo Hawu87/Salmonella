@@ -12,7 +12,7 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Pathogen Virulence Explorer",
   description:
-    "A comparative research platform for exploring virulence biology, gene expression, and host associations across Salmonella and Campylobacter.",
+    "A comparative research platform for exploring virulence biology, gene expression, and host associations across Salmonella typhi and Campylobacter.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-[#0F766E] focus:px-4 focus:py-2 focus:text-white focus:outline-none"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none"
         >
           Skip to content
         </a>

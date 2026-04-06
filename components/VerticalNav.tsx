@@ -8,8 +8,8 @@ export interface BiologySection {
 
 export const BIOLOGY_SECTIONS: BiologySection[] = [
   { id: 0, number: "01", label: "Overview" },
-  { id: 1, number: "02", label: "Salmonella" },
-  { id: 2, number: "03", label: "Infection (Salmonella)" },
+  { id: 1, number: "02", label: "Salmonella typhi" },
+  { id: 2, number: "03", label: "Infection (S. typhi)" },
   { id: 3, number: "04", label: "Campylobacter" },
   { id: 4, number: "05", label: "Virulence (Campylobacter)" },
   { id: 5, number: "06", label: "Risk Groups" },
@@ -39,7 +39,7 @@ export default function VerticalNav({ activeId, onSelect }: VerticalNavProps) {
                 onClick={() => onSelect(id)}
                 className={`w-full border-l-2 py-2 pl-4 text-left text-sm font-medium transition-colors ${
                   isActive
-                    ? "border-[#0F766E] text-[#0F766E]"
+                    ? "border-primary text-primary"
                     : "border-transparent text-[#6B7280] hover:text-[#111827]"
                 }`}
                 aria-current={isActive ? "true" : undefined}

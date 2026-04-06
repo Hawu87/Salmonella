@@ -29,7 +29,7 @@ export interface PathogenConfig {
 
 export const SITE_TITLE = 'Pathogen Virulence Explorer';
 export const SITE_DESCRIPTION =
-  'A comparative research platform for exploring virulence biology, gene expression, and host associations across Salmonella and Campylobacter.';
+  'A comparative research platform for exploring virulence biology, gene expression, and host associations across Salmonella typhi and Campylobacter.';
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {

@@ -24,12 +24,12 @@ export default function VisualizationsPage() {
         {/* Scope legend */}
         <div className="mb-10 flex flex-wrap gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#1D4ED8]" />
+            <span className="inline-block h-2 w-2 rounded-full bg-secondary" />
             Campylobacter-focused
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#0F766E]" />
-            Salmonella-focused
+            <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+            S. typhi-focused
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#6B7280]">
             <span className="inline-block h-2 w-2 rounded-full bg-[#7C3AED]" />

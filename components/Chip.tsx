@@ -18,8 +18,8 @@ export default function Chip({
   const base =
     "inline-flex items-center rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ";
   const activeStyle =
-    "border-[#0F766E] bg-[#0F766E] text-white";
-  const inactiveStyle = "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#0F766E]/50";
+    "border-primary bg-primary text-white";
+  const inactiveStyle = "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-primary/50";
 
   const combined = `${base} ${active ? activeStyle : inactiveStyle} ${className}`;
 

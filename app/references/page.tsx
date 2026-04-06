@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Container from "@/components/Container";
-import SectionNumber from "@/components/SectionNumber";
 import ReferenceItem from "@/components/ReferenceItem";
 import {
   ALL_REFERENCES,
@@ -29,17 +28,14 @@ export default function ReferencesPage() {
   return (
     <div className="bg-white">
       <Container>
-        <section className="mb-14 grid gap-10 lg:grid-cols-[auto_1fr] lg:gap-16">
-          <SectionNumber number="04" />
-          <div>
-            <h1 className="text-3xl font-bold text-[#111827] lg:text-4xl">
-              References
-            </h1>
-            <p className="mt-3 text-[#6B7280] max-w-2xl">
-              Sources cited across the platform, covering Salmonella,
-              Campylobacter, and shared research on virulence and food safety.
-            </p>
-          </div>
+        <section className="mb-14">
+          <h1 className="text-3xl font-bold text-[#111827] lg:text-4xl">
+            References
+          </h1>
+          <p className="mt-3 text-[#6B7280] max-w-2xl">
+            Sources cited across the platform, covering Salmonella,
+            Campylobacter, and shared research on virulence and food safety.
+          </p>
         </section>
 
         {/* Filter chips */}

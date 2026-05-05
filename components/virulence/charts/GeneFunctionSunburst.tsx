@@ -102,7 +102,14 @@ export default function GeneFunctionSunburst() {
   }, [data?.processes, filterByGene]);
 
   if (loading) return <div className="text-center py-8 text-gray-500">Loading chart...</div>;
-  if (error || !data || !sunburstArrays) return <div className="text-center py-8 text-red-600">Error: {error || 'No data available'}</div>;
+  if (error) return <div className="text-center py-8 text-red-600">Error: {error}</div>;
+  if (!data || !sunburstArrays) {
+    return (
+      <div className="text-center py-8 text-gray-500 text-sm">
+        No gene function data available for the selected species.
+      </div>
+    );
+  }
 
   const { sortedCategories } = sunburstArrays;
   const processes = data.processes;

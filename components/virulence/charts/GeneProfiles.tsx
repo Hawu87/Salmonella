@@ -42,7 +42,15 @@ export default function GeneProfiles() {
   const processOrder = ['adhesion', 'invasion', 'mobility', 'toxin', 'colonization', 'survival', 'other'];
   const sortedProcesses = processOrder
     .filter(p => processes[p]?.length > 0)
-    .concat(Object.keys(processes).filter(p => !processOrder.includes(p)));
+    .concat(Object.keys(processes).filter(p => !processOrder.includes(p) && processes[p]?.length > 0));
+
+  if (sortedProcesses.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500 text-sm">
+        No gene profile data available for the selected species.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

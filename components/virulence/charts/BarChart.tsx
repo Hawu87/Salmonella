@@ -45,6 +45,14 @@ export default function BarChart() {
     Object.keys(hostData.genes || {}).forEach(gene => allGenes.add(gene));
   });
 
+  if (allGenes.size === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500 text-sm">
+        No host-association data available for the selected species.
+      </div>
+    );
+  }
+
   const genesToDisplay = Array.from(allGenes).filter(gene =>
     majorGenes.some(mg => gene.toLowerCase().includes(mg.toLowerCase())) || majorGenes.includes(gene)
   );

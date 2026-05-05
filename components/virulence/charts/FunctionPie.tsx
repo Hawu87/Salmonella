@@ -48,6 +48,14 @@ export default function FunctionPie() {
   const values = labels.map(cat => functionCounts[cat]);
   const total = values.reduce((sum, val) => sum + val, 0);
 
+  if (total === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500 text-sm">
+        No gene function data available for the selected species.
+      </div>
+    );
+  }
+
   const chartData = {
     labels: labels.map((cat, idx) => `${cat} (${values[idx]}, ${Math.round((values[idx] / total) * 100)}%)`),
     datasets: [{

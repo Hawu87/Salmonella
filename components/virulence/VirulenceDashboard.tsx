@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { VirulenceDataProvider } from '@/components/virulence/shared/VirulenceDataProvider';
+import SpeciesFilterControl from '@/components/virulence/shared/SpeciesFilterControl';
 import VizSourceFooter from '@/components/virulence/shared/VizSourceFooter';
 
 const BarChart = dynamic(() => import('@/components/virulence/charts/BarChart'), { ssr: false });
@@ -30,6 +31,8 @@ export default function VirulenceDashboard() {
   return (
     <VirulenceDataProvider>
       <div className="space-y-8">
+        <SpeciesFilterControl />
+
         <VizCard
           title="Gene Virulence by Host Association"
           description="Bar chart comparing prevalence of key virulence genes across host categories (food animals vs. humans)."

@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import { filterDataBySpecies, type SpeciesFilter } from '@/lib/virulence/filterData';
 
 export interface GeneData {
   geneName: string;
@@ -12,7 +13,7 @@ export interface GeneData {
 }
 
 interface HostStats {
-  totalIsolates: number;
+  total: number;
   genes: Record<string, number>;
 }
 
@@ -65,6 +66,8 @@ interface DataContextType {
   data: ProcessedData | null;
   loading: boolean;
   error: string | null;
+  selectedSpecies: SpeciesFilter;
+  setSelectedSpecies: (species: SpeciesFilter) => void;
   getTopGenes: (k: number) => string[];
   filterByGene: (geneName: string) => GeneData | undefined;
 }
@@ -73,14 +76,17 @@ const DataContext = createContext<DataContextType>({
   data: null,
   loading: true,
   error: null,
+  selectedSpecies: 'all',
+  setSelectedSpecies: () => {},
   getTopGenes: () => [],
   filterByGene: () => undefined,
 });
 
 export function VirulenceDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<ProcessedData | null>(null);
+  const [rawData, setRawData] = useState<ProcessedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesFilter>('all');
 
   useEffect(() => {
     async function fetchData() {
@@ -90,7 +96,7 @@ export function VirulenceDataProvider({ children }: { children: ReactNode }) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const json = await response.json();
-        setData(json);
+        setRawData(json);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load data');
@@ -102,6 +108,11 @@ export function VirulenceDataProvider({ children }: { children: ReactNode }) {
 
     fetchData();
   }, []);
+
+  const data = useMemo<ProcessedData | null>(() => {
+    if (!rawData) return null;
+    return filterDataBySpecies(rawData, selectedSpecies);
+  }, [rawData, selectedSpecies]);
 
   const getTopGenes = (k: number): string[] => {
     if (!data) return [];
@@ -130,7 +141,17 @@ export function VirulenceDataProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <DataContext.Provider value={{ data, loading, error, getTopGenes, filterByGene }}>
+    <DataContext.Provider
+      value={{
+        data,
+        loading,
+        error,
+        selectedSpecies,
+        setSelectedSpecies,
+        getTopGenes,
+        filterByGene,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

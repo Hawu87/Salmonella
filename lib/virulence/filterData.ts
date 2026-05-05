@@ -1,6 +1,8 @@
 import type { ProcessedData } from '@/components/virulence/shared/VirulenceDataProvider';
+import { speciesShortLabel } from './species';
 
-export type SpeciesFilter = 'all' | 'jejuni' | 'coli' | 'salmonella_typhi';
+export const ALL_SPECIES_FILTER = 'all' as const;
+export type SpeciesFilter = typeof ALL_SPECIES_FILTER | string;
 
 export interface SpeciesOption {
   value: SpeciesFilter;
@@ -8,15 +10,24 @@ export interface SpeciesOption {
   short: string;
 }
 
-export const SPECIES_OPTIONS: SpeciesOption[] = [
-  { value: 'all', label: 'All species', short: 'All' },
-  { value: 'jejuni', label: 'Campylobacter jejuni', short: 'C. jejuni' },
-  { value: 'coli', label: 'Campylobacter coli', short: 'C. coli' },
-  { value: 'salmonella_typhi', label: 'Salmonella typhi', short: 'S. typhi' },
-];
+/**
+ * Build the dropdown options for the species filter from whatever species
+ * are present in the dataset. The "All species" entry is always first.
+ */
+export function buildSpeciesOptions(speciesList: string[]): SpeciesOption[] {
+  return [
+    { value: ALL_SPECIES_FILTER, label: 'All species', short: 'All' },
+    ...speciesList.map(key => ({
+      value: key,
+      label: speciesShortLabel(key),
+      short: speciesShortLabel(key),
+    })),
+  ];
+}
 
 export function getSpeciesShortLabel(species: SpeciesFilter): string {
-  return SPECIES_OPTIONS.find(o => o.value === species)?.short ?? 'All';
+  if (species === ALL_SPECIES_FILTER) return 'All';
+  return speciesShortLabel(species);
 }
 
 function categorizeProcess(functionName: string): string {
@@ -41,10 +52,13 @@ const TOP_K_SANKEY = 20;
 
 const EMPTY_DATA: ProcessedData = {
   genes: [],
+  speciesList: [],
+  speciesLabels: {},
   hostStats: {},
   hostTotals: {},
   hostPrevalence: {},
   speciesMatrix: {},
+  speciesGeneCounts: {},
   processes: {},
   cooccurrence: { nodes: [], links: [] },
   sunburstHierarchy: { name: 'Human isolates', children: [] },
@@ -52,28 +66,35 @@ const EMPTY_DATA: ProcessedData = {
 };
 
 /**
- * Derives a species-scoped view of ProcessedData. When `species === 'all'`,
- * the original data is returned unchanged. Otherwise all derived structures
- * are rebuilt from the subset of genes that include the selected species so
- * every chart consuming the provider sees a consistent filtered dataset.
+ * Derives a species-scoped view of `ProcessedData`. When `species ===
+ * 'all'`, the original data is returned unchanged. Otherwise every
+ * derived structure is rebuilt from the subset of genes that include the
+ * selected species so all charts see a consistent filtered dataset.
  */
 export function filterDataBySpecies(
   data: ProcessedData,
   species: SpeciesFilter,
 ): ProcessedData {
-  if (species === 'all') return data;
+  if (species === ALL_SPECIES_FILTER) return data;
 
   const filteredGenes = data.genes.filter(g => g.species.includes(species));
-  if (filteredGenes.length === 0) return EMPTY_DATA;
+  if (filteredGenes.length === 0) {
+    return {
+      ...EMPTY_DATA,
+      speciesList: data.speciesList,
+      speciesLabels: data.speciesLabels,
+    };
+  }
+
+  const speciesList = data.speciesList;
 
   const speciesMatrix: ProcessedData['speciesMatrix'] = {};
   for (const g of filteredGenes) {
     if (!speciesMatrix[g.geneName]) {
-      speciesMatrix[g.geneName] = { jejuni: false, coli: false, salmonellaTyphi: false };
+      speciesMatrix[g.geneName] = {};
+      for (const key of speciesList) speciesMatrix[g.geneName][key] = false;
     }
-    if (species === 'jejuni') speciesMatrix[g.geneName].jejuni = true;
-    if (species === 'coli') speciesMatrix[g.geneName].coli = true;
-    if (species === 'salmonella_typhi') speciesMatrix[g.geneName].salmonellaTyphi = true;
+    speciesMatrix[g.geneName][species] = true;
   }
 
   const processes: Record<string, string[]> = {};
@@ -86,9 +107,11 @@ export function filterDataBySpecies(
   const isolateMap: Record<string, Set<string>> = {};
   const hostStatsRaw: Record<string, Record<string, number> & { totalIsolates: number }> = {};
   const geneCounts: Record<string, number> = {};
+  const speciesGeneCounts: ProcessedData['speciesGeneCounts'] = { [species]: {} };
 
   for (const g of filteredGenes) {
     geneCounts[g.geneName] = (geneCounts[g.geneName] || 0) + 1;
+    speciesGeneCounts[species][g.geneName] = (speciesGeneCounts[species][g.geneName] || 0) + 1;
     g.hosts.forEach(host => {
       if (!host) return;
       const key = `${host}::${species}`;
@@ -149,8 +172,7 @@ export function filterDataBySpecies(
     });
   });
 
-  const speciesLabel =
-    species === 'jejuni' ? 'C. jejuni' : species === 'coli' ? 'C. coli' : 'S. typhi';
+  const speciesLabel = data.speciesLabels[species] ?? speciesShortLabel(species);
   const humanGeneSet = new Set<string>();
   Object.keys(isolateMap).forEach(key => {
     const [host] = key.split('::');
@@ -197,10 +219,13 @@ export function filterDataBySpecies(
 
   return {
     genes: filteredGenes,
+    speciesList: data.speciesList,
+    speciesLabels: data.speciesLabels,
     hostStats,
     hostTotals,
     hostPrevalence,
     speciesMatrix,
+    speciesGeneCounts,
     processes,
     cooccurrence: { nodes: cooccurrenceNodes, links: cooccurrenceLinks },
     sunburstHierarchy,

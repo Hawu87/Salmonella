@@ -2,12 +2,14 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import Divider from "@/components/Divider";
 import { TEAM_MEMBERS } from "@/lib/pathogens/config";
+import { getSpeciesMeta } from "@/lib/virulence/species";
+import { getDatasetSpeciesKeys } from "@/lib/virulence/serverData";
 
 const STRUCTURE_BLOCKS = [
   {
     title: "Biology",
     description:
-      "Explore the biology of Salmonella and Campylobacter — how they infect hosts, cause disease, and differ in their virulence strategies.",
+      "Explore the biology of the organisms in this dataset — how they infect hosts, cause disease, and differ in their virulence strategies.",
     href: "/biology",
   },
   {
@@ -24,24 +26,10 @@ const STRUCTURE_BLOCKS = [
   },
 ];
 
-const ORGANISMS = [
-  {
-    name: "Salmonella",
-    scientific: "Salmonella typhi",
-    summary:
-      "The causative agent of typhoid fever, a severe systemic infection transmitted through contaminated food and water. As a member of the broader Salmonella genus, S. typhi is studied for its specialized virulence mechanisms and host-adapted pathogenicity.",
-    accent: "var(--primary)",
-  },
-  {
-    name: "Campylobacter",
-    scientific: "Campylobacter jejuni / C. coli",
-    summary:
-      "The leading cause of bacterial gastroenteritis globally. Campylobacter jejuni and Campylobacter coli are commonly profiled for their virulence-associated genes, which play roles in adhesion, invasion, toxin production, and environmental persistence.",
-    accent: "var(--secondary)",
-  },
-];
-
 export default function Home() {
+  const speciesKeys = getDatasetSpeciesKeys();
+  const organisms = speciesKeys.map(key => getSpeciesMeta(key));
+
   return (
     <div className="bg-white">
       <Container>
@@ -57,11 +45,22 @@ export default function Home() {
           <div className="mt-8 space-y-4 text-[#111827]">
             <p>
               This platform brings together structured biology, interactive
-              visualizations, and curated references for two major foodborne
-              pathogens: <strong>Salmonella typhi</strong> and{" "}
-              <strong>Campylobacter</strong>. It supports comparative analysis
-              of virulence-associated genes across species and host
-              environments.
+              visualizations, and curated references for major foodborne
+              pathogens. The current dataset covers{" "}
+              {organisms.length > 0
+                ? organisms.map((o, i) => (
+                    <span key={o.key}>
+                      <strong>{o.fullLabel}</strong>
+                      {i < organisms.length - 2
+                        ? ", "
+                        : i === organisms.length - 2
+                          ? ", and "
+                          : ""}
+                    </span>
+                  ))
+                : "the organisms in this dataset"}
+              . It supports comparative analysis of virulence-associated genes
+              across species and host environments.
             </p>
             <p>
               Understanding how these organisms differ in their virulence
@@ -81,10 +80,10 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-[#111827]">
             Organisms Covered
           </h2>
-          <div className="mt-10 grid gap-8 sm:grid-cols-2">
-            {ORGANISMS.map((org) => (
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {organisms.map((org) => (
               <div
-                key={org.name}
+                key={org.key}
                 className="rounded-lg border border-[#E5E7EB] border-l-4 p-6"
                 style={{ borderLeftColor: org.accent }}
               >
@@ -94,14 +93,14 @@ export default function Home() {
                     style={{ backgroundColor: org.accent }}
                   />
                   <h3 className="text-lg font-semibold text-[#111827]">
-                    {org.name}
+                    {org.shortLabel}
                   </h3>
                 </div>
                 <p className="text-xs text-[#6B7280] italic mb-3">
-                  {org.scientific}
+                  {org.scientificName}
                 </p>
                 <p className="text-sm text-[#111827] leading-relaxed">
-                  {org.summary}
+                  {org.homepageDescription}
                 </p>
               </div>
             ))}
@@ -175,13 +174,10 @@ export default function Home() {
           <div className="mt-6 space-y-4 text-[#111827] max-w-2xl">
             <p>
               Pathogen Virulence Explorer is a student-led data storytelling
-              project that visualizes patterns in virulence factors across{" "}
-              <em>Salmonella</em> and <em>Campylobacter</em> species through
-              interactive charts and structured biology content.
+              project that visualizes patterns in virulence factors across
+              foodborne bacterial species through interactive charts and
+              structured biology content.
             </p>
-            {/* <p className="text-sm text-[#6B7280] italic">
-              Funding: Supported by grant (Grant ID: GRANT-XXXX).
-            </p> */}
           </div>
         </section>
       </Container>

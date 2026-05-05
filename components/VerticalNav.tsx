@@ -6,21 +6,13 @@ export interface BiologySection {
   label: string;
 }
 
-export const BIOLOGY_SECTIONS: BiologySection[] = [
-  { id: 0, number: "01", label: "Overview" },
-  { id: 1, number: "02", label: "Salmonella typhi" },
-  { id: 2, number: "03", label: "Infection (S. typhi)" },
-  { id: 3, number: "04", label: "Campylobacter" },
-  { id: 4, number: "05", label: "Virulence (Campylobacter)" },
-  { id: 5, number: "06", label: "Risk Groups" },
-];
-
 interface VerticalNavProps {
+  sections: BiologySection[];
   activeId: number;
   onSelect: (id: number) => void;
 }
 
-export default function VerticalNav({ activeId, onSelect }: VerticalNavProps) {
+export default function VerticalNav({ sections, activeId, onSelect }: VerticalNavProps) {
   return (
     <nav
       className="lg:sticky lg:top-8 lg:self-start"
@@ -30,7 +22,7 @@ export default function VerticalNav({ activeId, onSelect }: VerticalNavProps) {
         Contents
       </h2>
       <ul className="space-y-1">
-        {BIOLOGY_SECTIONS.map(({ id, number, label }) => {
+        {sections.map(({ id, number, label }) => {
           const isActive = activeId === id;
           return (
             <li key={id}>

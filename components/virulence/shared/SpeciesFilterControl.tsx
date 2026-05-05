@@ -1,10 +1,16 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useVirulenceData } from '@/components/virulence/shared/VirulenceDataProvider';
-import { SPECIES_OPTIONS, type SpeciesFilter } from '@/lib/virulence/filterData';
+import { buildSpeciesOptions, type SpeciesFilter } from '@/lib/virulence/filterData';
 
 export default function SpeciesFilterControl() {
-  const { selectedSpecies, setSelectedSpecies } = useVirulenceData();
+  const { data, selectedSpecies, setSelectedSpecies } = useVirulenceData();
+
+  const options = useMemo(
+    () => buildSpeciesOptions(data?.speciesList ?? []),
+    [data?.speciesList],
+  );
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
@@ -27,7 +33,7 @@ export default function SpeciesFilterControl() {
           aria-label="Filter visualizations by species"
           className="flex flex-wrap gap-1.5 rounded-lg border border-gray-200 bg-gray-50 p-1"
         >
-          {SPECIES_OPTIONS.map(opt => {
+          {options.map(opt => {
             const active = selectedSpecies === opt.value;
             return (
               <button

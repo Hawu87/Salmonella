@@ -2,8 +2,9 @@
 
 import { useVirulenceData } from '@/components/virulence/shared/VirulenceDataProvider';
 import { plotlyBaseLayout, plotlyResponsiveConfig, usePlotlyResizeOnMount } from '@/lib/virulence/plotlyResponsive';
+import { getSpeciesAccent, speciesShortLabel } from '@/lib/virulence/species';
 import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
@@ -34,26 +35,27 @@ export default function Sunburst({ onSectorClick }: SunburstProps) {
 
   usePlotlyResizeOnMount();
 
+  /**
+   * Build a label → accent color lookup from the dataset's species list so
+   * the chart can colorize whatever species appear under "Human isolates"
+   * (the data layer emits species short labels for sunburst children).
+   */
+  const labelToAccent = useMemo(() => {
+    const map = new Map<string, string>();
+    (data?.speciesList ?? []).forEach(key => {
+      const label = data?.speciesLabels?.[key] ?? speciesShortLabel(key);
+      map.set(label, getSpeciesAccent(key));
+    });
+    return map;
+  }, [data?.speciesList, data?.speciesLabels]);
+
   if (loading) return <div className="text-center py-8 text-gray-500">Loading sunburst...</div>;
   if (error || !data?.sunburstHierarchy) return <div className="text-center py-8 text-red-600">Error: {error || 'No data available'}</div>;
   if (!data.sunburstHierarchy.children?.length) return <div className="text-center py-8 text-gray-500 text-sm">No human isolate data available for this chart.</div>;
 
-  const getColor = (label: string, parentPath: string): string => {
+  const getColor = (label: string): string => {
     if (label === 'Human isolates' || label === 'All isolates') return '#6b7280';
-    if (label === 'C. jejuni') return '#3b82f6';
-    if (label === 'C. coli') return '#ef4444';
-    if (label === 'Other') return '#9ca3af';
-    const pathParts = parentPath.split('|');
-    const species = pathParts.find(p => p === 'C. jejuni' || p === 'C. coli' || p === 'Other');
-    if (species === 'C. jejuni') {
-      const shades = ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'];
-      return shades[label.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % shades.length];
-    }
-    if (species === 'C. coli') {
-      const shades = ['#f87171', '#ef4444', '#dc2626', '#b91c1c', '#991b1b'];
-      return shades[label.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % shades.length];
-    }
-    return '#9ca3af';
+    return labelToAccent.get(label) ?? '#9ca3af';
   };
 
   const build = (node: SunburstNode, parent = '') => {
@@ -61,7 +63,7 @@ export default function Sunburst({ onSectorClick }: SunburstProps) {
     const process = (n: SunburstNode, p = '') => {
       const id = p ? `${p}|${n.name}` : n.name;
       result.ids.push(id); result.labels.push(n.name); result.parents.push(p);
-      result.values.push(n.value ?? 0); result.colors.push(getColor(n.name, p));
+      result.values.push(n.value ?? 0); result.colors.push(getColor(n.name));
       n.children?.forEach(child => process(child, id));
     };
     process(node, parent);
@@ -83,17 +85,23 @@ export default function Sunburst({ onSectorClick }: SunburstProps) {
     font: { color: '#374151' },
   });
 
+  const legendEntries = (data.speciesList ?? []).map(key => ({
+    key,
+    label: data.speciesLabels?.[key] ?? speciesShortLabel(key),
+    color: getSpeciesAccent(key),
+  }));
+
   return (
     <div className="w-full">
       <div className="flex flex-wrap gap-3 sm:gap-4 items-center mb-3 text-xs sm:text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: '#3b82f6' }} />
-          <span className="text-gray-600"><span className="font-medium">Blue:</span> Campylobacter jejuni</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: '#ef4444' }} />
-          <span className="text-gray-600"><span className="font-medium">Red:</span> Campylobacter coli</span>
-        </div>
+        {legendEntries.map(entry => (
+          <div key={entry.key} className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+            <span className="text-gray-600">
+              <span className="font-medium">{entry.label}</span>
+            </span>
+          </div>
+        ))}
         <span className="text-gray-500 text-xs"><span className="font-medium">Segment size:</span> Gene count (human isolates)</span>
       </div>
       <div className="w-full h-[500px] sm:h-[560px]">

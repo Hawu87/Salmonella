@@ -1,7 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
-import { filterDataBySpecies, type SpeciesFilter } from '@/lib/virulence/filterData';
+import {
+  ALL_SPECIES_FILTER,
+  filterDataBySpecies,
+  type SpeciesFilter,
+} from '@/lib/virulence/filterData';
 
 export interface GeneData {
   geneName: string;
@@ -46,10 +50,17 @@ interface SankeyLink {
 
 export interface ProcessedData {
   genes: GeneData[];
+  /** Canonical species keys (e.g. `campylobacter_jejuni`) present in the dataset, in display order. */
+  speciesList: string[];
+  /** Map from species key → short label (e.g. `C. jejuni`). */
+  speciesLabels: Record<string, string>;
   hostStats: Record<string, HostStats>;
   hostTotals: Record<string, number>;
   hostPrevalence: Record<string, Record<string, number>>;
-  speciesMatrix: Record<string, { jejuni: boolean; coli: boolean; salmonellaTyphi: boolean }>;
+  /** `speciesMatrix[geneName][speciesKey] = true` if the gene is present in that species. */
+  speciesMatrix: Record<string, Record<string, boolean>>;
+  /** `speciesGeneCounts[speciesKey][geneName] = count` of times the gene is annotated for that species. */
+  speciesGeneCounts: Record<string, Record<string, number>>;
   processes: Record<string, string[]>;
   cooccurrence: {
     nodes: CooccurrenceNode[];
@@ -76,7 +87,7 @@ const DataContext = createContext<DataContextType>({
   data: null,
   loading: true,
   error: null,
-  selectedSpecies: 'all',
+  selectedSpecies: ALL_SPECIES_FILTER,
   setSelectedSpecies: () => {},
   getTopGenes: () => [],
   filterByGene: () => undefined,
@@ -86,7 +97,7 @@ export function VirulenceDataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<ProcessedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesFilter>('all');
+  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesFilter>(ALL_SPECIES_FILTER);
 
   useEffect(() => {
     async function fetchData() {

@@ -2,6 +2,7 @@
 
 import { useVirulenceData } from '@/components/virulence/shared/VirulenceDataProvider';
 import { plotlyBaseLayout, plotlyResponsiveConfig, usePlotlyResizeOnMount } from '@/lib/virulence/plotlyResponsive';
+import { speciesShortLabel } from '@/lib/virulence/species';
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -66,20 +67,15 @@ export default function VariabilityPlot() {
     data.genes.forEach(g => { if (!geneFunction[g.geneName]) geneFunction[g.geneName] = g.function; });
     const hostCategories = ['Poultry', 'Cattle', 'Swine', 'Human', 'Multiple'];
     const availableHosts = hostCategories.filter(h => data.hostPrevalence[h]);
-    const speciesPrevalence: Record<string, Record<string, number>> = { 'C. jejuni': {}, 'C. coli': {} };
-    const speciesGeneCounts: Record<string, Record<string, number>> = { 'jejuni': {}, 'coli': {} };
-    const speciesTotals: Record<string, number> = { 'jejuni': 0, 'coli': 0 };
-    data.genes.forEach(gene => {
-      gene.species.forEach(sp => {
-        const ns = sp.toLowerCase().includes('jejuni') ? 'jejuni' : sp.toLowerCase().includes('coli') ? 'coli' : null;
-        if (ns) { speciesGeneCounts[ns][gene.geneName] = (speciesGeneCounts[ns][gene.geneName] || 0) + 1; speciesTotals[ns]++; }
-      });
-    });
-    Object.keys(speciesGeneCounts).forEach(sp => {
-      const label = sp === 'jejuni' ? 'C. jejuni' : 'C. coli';
-      const total = speciesTotals[sp];
-      Object.keys(speciesGeneCounts[sp]).forEach(gene => {
-        speciesPrevalence[label][gene] = total > 0 ? Math.round((speciesGeneCounts[sp][gene] / total) * 10000) / 100 : 0;
+    const speciesKeys = data.speciesList;
+    const speciesPrevalence: Record<string, Record<string, number>> = {};
+    speciesKeys.forEach(key => {
+      const label = data.speciesLabels[key] ?? speciesShortLabel(key);
+      const geneCounts = data.speciesGeneCounts?.[key] ?? {};
+      const total = Object.values(geneCounts).reduce((s, v) => s + v, 0);
+      speciesPrevalence[label] = {};
+      Object.keys(geneCounts).forEach(gene => {
+        speciesPrevalence[label][gene] = total > 0 ? Math.round((geneCounts[gene] / total) * 10000) / 100 : 0;
       });
     });
     const results: GeneVariability[] = [];

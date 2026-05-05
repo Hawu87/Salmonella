@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import fs from 'fs';
 import path from 'path';
+import { parseSpeciesCellToKeys, sortSpeciesKeys, speciesShortLabel } from '@/lib/virulence/species';
 
 interface GeneData {
   geneName: string;
@@ -41,10 +42,13 @@ interface SankeyLink {
 
 interface ProcessedData {
   genes: GeneData[];
+  speciesList: string[];
+  speciesLabels: Record<string, string>;
   hostStats: Record<string, { total: number; genes: Record<string, number> }>;
   hostTotals: Record<string, number>;
   hostPrevalence: Record<string, Record<string, number>>;
-  speciesMatrix: Record<string, { jejuni: boolean; coli: boolean; salmonellaTyphi: boolean }>;
+  speciesMatrix: Record<string, Record<string, boolean>>;
+  speciesGeneCounts: Record<string, Record<string, number>>;
   processes: Record<string, string[]>;
   cooccurrence: {
     nodes: CooccurrenceNode[];
@@ -78,39 +82,10 @@ function normalizeHost(host: string): string {
   return host || 'Unknown';
 }
 
-const SPECIES_TOKEN_SALMONELLA_TYPHI = 'salmonella_typhi' as const;
-type SpeciesBucket = 'jejuni' | 'coli' | typeof SPECIES_TOKEN_SALMONELLA_TYPHI;
-
 function resolvePrimaryDataSheetName(sheetNames: string[]): string {
   if (!sheetNames.length) return '';
   const sheet1 = sheetNames.find(n => n.replace(/^\s+|\s+$/g, '').toLowerCase() === 'sheet1');
   return sheet1 ?? sheetNames[0];
-}
-
-function mapSpeciesBucket(raw: string): SpeciesBucket | null {
-  const t = raw.toLowerCase().trim();
-  if (!t) return null;
-  if (t.includes('salmonella typhi') || (t.includes('salmonella') && t.includes('typhi'))) {
-    return SPECIES_TOKEN_SALMONELLA_TYPHI;
-  }
-  if (t.includes('campylobacter jejuni')) return 'jejuni';
-  if (t.includes('campylobacter coli')) return 'coli';
-  if (/\bc\.?\s*jejuni\b/.test(t)) return 'jejuni';
-  if (/\bc\.?\s*coli\b/.test(t)) return 'coli';
-  return null;
-}
-
-function parseSpeciesBuckets(speciesStr: string): SpeciesBucket[] {
-  const buckets = new Set<SpeciesBucket>();
-  const fragments = speciesStr
-    .split(/[,;]/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
-  for (const frag of fragments) {
-    const b = mapSpeciesBucket(frag);
-    if (b) buckets.add(b);
-  }
-  return [...buckets];
 }
 
 export async function GET() {
@@ -140,23 +115,17 @@ export async function GET() {
     const clusterCol = headers.findIndex(h => h.includes('cluster'));
     const functionCol = headers.findIndex(h => h.includes('function') || h.includes('role'));
     const speciesCol = headers.findIndex(h => h.includes('species'));
-    let salmonellaTyphiFlagCol = headers.findIndex(
-      (h, idx) => idx !== speciesCol && h.includes('salmonella') && h.includes('typhi')
-    );
-    if (salmonellaTyphiFlagCol < 0) {
-      salmonellaTyphiFlagCol = headers.findIndex(
-        (h, idx) => idx !== speciesCol && h.includes('salmonella')
-      );
-    }
     const hostCol = headers.findIndex(h => h.includes('host'));
     const notesCol = headers.findIndex(h => h.includes('note') || h.includes('comment'));
 
     const isolateMap: Record<string, Set<string>> = {};
     const genes: GeneData[] = [];
     const hostStats: Record<string, Record<string, number> & { totalIsolates: number }> = {};
-    const speciesMatrix: Record<string, { jejuni: boolean; coli: boolean; salmonellaTyphi: boolean }> = {};
+    const speciesMatrix: Record<string, Record<string, boolean>> = {};
+    const speciesGeneCounts: Record<string, Record<string, number>> = {};
     const processes: Record<string, string[]> = {};
     const geneCounts: Record<string, number> = {};
+    const allSpeciesKeys = new Set<string>();
 
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
@@ -171,37 +140,21 @@ export async function GET() {
       const hostStr = hostCol >= 0 ? ((row[hostCol] as unknown) || '').toString().trim() : '';
       const notes = notesCol >= 0 ? ((row[notesCol] as unknown) || '').toString().trim() : undefined;
 
-      let species: string[] = parseSpeciesBuckets(speciesStr).map(b => b as string);
-
-      if (salmonellaTyphiFlagCol >= 0) {
-        const raw = ((row[salmonellaTyphiFlagCol] as unknown) || '').toString().trim();
-        const cell = raw.toLowerCase();
-        const positive =
-          raw === '1' || cell === 'y' || cell === 'yes' || cell === 'true' ||
-          cell === 'present' || cell === 'positive' || cell === 'x';
-        if (positive && !species.includes(SPECIES_TOKEN_SALMONELLA_TYPHI)) {
-          species = [...species, SPECIES_TOKEN_SALMONELLA_TYPHI];
-        }
-      }
+      const speciesKeys = parseSpeciesCellToKeys(speciesStr);
+      speciesKeys.forEach(k => allSpeciesKeys.add(k));
 
       const hosts = hostStr
         .split(/[,;]/)
         .map((h: string) => normalizeHost(h))
         .filter((h: string) => h.length > 0 && h !== 'Unknown');
 
-      genes.push({ geneName, cluster, function: functionName, species, hosts, notes });
+      genes.push({ geneName, cluster, function: functionName, species: speciesKeys, hosts, notes });
       geneCounts[geneName] = (geneCounts[geneName] || 0) + 1;
 
-      const primarySpecies = species.includes('jejuni')
-        ? 'jejuni'
-        : species.includes('coli')
-          ? 'coli'
-          : species.includes(SPECIES_TOKEN_SALMONELLA_TYPHI)
-            ? SPECIES_TOKEN_SALMONELLA_TYPHI
-            : 'other';
+      const primarySpeciesKey = speciesKeys[0] ?? 'unknown';
 
       hosts.forEach((host: string) => {
-        const isolateKey = `${host}::${primarySpecies}`;
+        const isolateKey = `${host}::${primarySpeciesKey}`;
         if (!isolateMap[isolateKey]) isolateMap[isolateKey] = new Set();
         isolateMap[isolateKey].add(geneName);
 
@@ -210,16 +163,28 @@ export async function GET() {
         hostStats[host].totalIsolates++;
       });
 
-      if (!speciesMatrix[geneName]) {
-        speciesMatrix[geneName] = { jejuni: false, coli: false, salmonellaTyphi: false };
-      }
-      if (species.includes('jejuni')) speciesMatrix[geneName].jejuni = true;
-      if (species.includes('coli')) speciesMatrix[geneName].coli = true;
-      if (species.includes(SPECIES_TOKEN_SALMONELLA_TYPHI)) speciesMatrix[geneName].salmonellaTyphi = true;
+      if (!speciesMatrix[geneName]) speciesMatrix[geneName] = {};
+      speciesKeys.forEach(key => {
+        speciesMatrix[geneName][key] = true;
+        if (!speciesGeneCounts[key]) speciesGeneCounts[key] = {};
+        speciesGeneCounts[key][geneName] = (speciesGeneCounts[key][geneName] || 0) + 1;
+      });
 
       const processName = categorizeProcess(functionName);
       if (!processes[processName]) processes[processName] = [];
       if (!processes[processName].includes(geneName)) processes[processName].push(geneName);
+    }
+
+    const speciesList = sortSpeciesKeys([...allSpeciesKeys]);
+    const speciesLabels: Record<string, string> = {};
+    speciesList.forEach(key => {
+      speciesLabels[key] = speciesShortLabel(key);
+    });
+
+    for (const geneName of Object.keys(speciesMatrix)) {
+      for (const key of speciesList) {
+        if (!(key in speciesMatrix[geneName])) speciesMatrix[geneName][key] = false;
+      }
     }
 
     const hostTotals: Record<string, number> = {};
@@ -289,17 +254,17 @@ export async function GET() {
 
     const humanSpeciesTotals: Record<string, number> = {};
     Object.keys(isolateMap).forEach(isolateKey => {
-      const [host, species] = isolateKey.split('::');
+      const sepIdx = isolateKey.indexOf('::');
+      const host = isolateKey.slice(0, sepIdx);
+      const speciesKey = isolateKey.slice(sepIdx + 2);
       if (host !== 'Human') return;
-      const normalizedSpecies =
-        species === 'jejuni' ? 'C. jejuni' : species === 'coli' ? 'C. coli' : 'Other';
-      humanSpeciesTotals[normalizedSpecies] =
-        (humanSpeciesTotals[normalizedSpecies] || 0) + isolateMap[isolateKey].size;
+      const label = speciesLabels[speciesKey] ?? speciesShortLabel(speciesKey) ?? 'Other';
+      humanSpeciesTotals[label] = (humanSpeciesTotals[label] || 0) + isolateMap[isolateKey].size;
     });
 
     const speciesChildren: SunburstNode[] = Object.keys(humanSpeciesTotals)
       .filter(s => humanSpeciesTotals[s] > 0)
-      .map(species => ({ name: species, value: humanSpeciesTotals[species] }));
+      .map(speciesLabelStr => ({ name: speciesLabelStr, value: humanSpeciesTotals[speciesLabelStr] }));
 
     const sunburstHierarchy: SunburstNode = {
       name: 'Human isolates',
@@ -344,10 +309,13 @@ export async function GET() {
 
     const result: ProcessedData = {
       genes,
+      speciesList,
+      speciesLabels,
       hostStats: hostStatsWithPrevalence,
       hostTotals,
       hostPrevalence,
       speciesMatrix,
+      speciesGeneCounts,
       processes,
       cooccurrence: { nodes: cooccurrenceNodes, links: cooccurrenceLinks },
       sunburstHierarchy,

@@ -42,7 +42,7 @@ export default function VirulenceDashboard() {
 
         <VizCard
           title="Species Presence Matrix"
-          description="Table showing which virulence genes are present in C. jejuni, C. coli, and Salmonella typhi. Green indicates expression, red indicates absence."
+          description="Table showing which virulence genes are present in each species in the dataset. Green indicates expression, red indicates absence. Columns are derived from the data, so new species appear automatically."
         >
           <Matrix />
         </VizCard>
@@ -70,7 +70,7 @@ export default function VirulenceDashboard() {
 
         <VizCard
           title="Human Isolate Sunburst"
-          description="Sunburst diagram showing gene counts from human isolates, broken down by Campylobacter species."
+          description="Sunburst diagram showing gene counts from human isolates, broken down by species present in the dataset."
         >
           <Sunburst />
         </VizCard>
@@ -91,7 +91,7 @@ export default function VirulenceDashboard() {
 
         <VizCard
           title="Gene Counts by Species"
-          description="Comparison of gene occurrences across C. jejuni, C. coli, and Salmonella typhi."
+          description="Comparison of gene occurrences across all species present in the dataset."
         >
           <SpeciesBarChart topN={50} showPercent={false} />
         </VizCard>

@@ -36,7 +36,7 @@ export default function Home() {
         {/* Hero */}
         <section>
           <h1 className="text-3xl font-bold text-[#111827] lg:text-4xl">
-            Pathogen <span className="text-primary">Virulence</span> Explorer
+            Gerald <span className="text-primary">Virulence</span> Explorer
           </h1>
           <p className="mt-3 text-[#6B7280] lg:text-lg max-w-2xl">
             A comparative research platform for exploring virulence biology,

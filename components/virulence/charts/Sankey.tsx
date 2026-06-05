@@ -51,7 +51,7 @@ export default function Sankey({ topK = 20, onGeneClick }: SankeyProps) {
   }];
 
   const layout = plotlyBaseLayout({
-    title: { text: `Distribution Across Host Categories (Top ${topK} Genes)`, font: { size: isMobile ? 12 : isTablet ? 13 : 14, color: '#111827' } },
+    title: { text: `Distribution across host environments (Top ${topK} genes)`, font: { size: isMobile ? 12 : isTablet ? 13 : 14, color: '#111827' } },
     font: { size: isMobile ? 10 : isTablet ? 11 : 12, color: '#374151' },
     margin: { l: isMobile ? 40 : 50, r: isMobile ? 40 : 50, t: isMobile ? 60 : 50, b: isMobile ? 40 : 50 },
   });
@@ -61,7 +61,7 @@ export default function Sankey({ topK = 20, onGeneClick }: SankeyProps) {
       <div className="flex flex-wrap gap-3 sm:gap-4 items-center mb-3 text-xs sm:text-sm">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{ backgroundColor: '#0f766e' }} />
-          <span className="text-gray-600"><span className="font-medium">Teal nodes:</span> Host categories</span>
+          <span className="text-gray-600"><span className="font-medium">Teal nodes:</span> Host environments (from regulation)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{ backgroundColor: '#ef553b' }} />

@@ -16,7 +16,7 @@ export default function VisualizationsPage() {
           </h1>
           <p className="mt-4 text-[#6B7280] max-w-2xl leading-relaxed">
             Interactive visualizations exploring virulence gene data across host
-            associations, bacterial species, and functional categories. The
+            environment regulation, bacterial species, and functional categories. The
             current dataset covers{" "}
             {organisms.length > 0
               ? organisms.map((o, i) => (

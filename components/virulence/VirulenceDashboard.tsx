@@ -34,8 +34,8 @@ export default function VirulenceDashboard() {
         <SpeciesFilterControl />
 
         <VizCard
-          title="Gene Virulence by Host Association"
-          description="Bar chart comparing prevalence of key virulence genes across host categories (food animals vs. humans)."
+          title="Gene prevalence by host environment"
+          description="Bar chart comparing prevalence of key virulence genes across host environments inferred from regulation annotations (avian/poultry, bovine/cattle, human)."
         >
           <BarChart />
         </VizCard>
@@ -62,15 +62,15 @@ export default function VirulenceDashboard() {
         </VizCard>
 
         <VizCard
-          title="Host–Gene Sankey Diagram"
-          description="Flow diagram showing how the top genes distribute across host categories. Connection thickness represents isolate count."
+          title="Host environment–gene Sankey"
+          description="Flow diagram showing how the top genes distribute across host environments (mapped from regulation in host environments). Connection thickness reflects annotation count."
         >
           <Sankey topK={TOP_N} />
         </VizCard>
 
         <VizCard
-          title="Human Isolate Sunburst"
-          description="Sunburst diagram showing gene counts from human isolates, broken down by species present in the dataset."
+          title="Human host environment sunburst"
+          description="Sunburst of gene counts for rows with human upregulation, broken down by species in the dataset."
         >
           <Sunburst />
         </VizCard>

@@ -48,7 +48,7 @@ export default function BarChart() {
   if (allGenes.size === 0) {
     return (
       <div className="text-center py-8 text-gray-500 text-sm">
-        No host-association data available for the selected species.
+        No host-regulation data available for the selected species.
       </div>
     );
   }
@@ -72,12 +72,11 @@ export default function BarChart() {
     return null;
   };
 
-  const foodAnimalsKey = findHostKey(['Food animals']);
-  const bothKey = findHostKey(['Multiple (food animals, humans)', 'Multiple']);
-
   const hostCategoryMap = [
-    { key: foodAnimalsKey, label: 'Food animals', color: '#eab308' },
-    { key: bothKey, label: 'Both (Humans + Food animals)', color: '#ef4444' },
+    { key: findHostKey(['Poultry']), label: 'Poultry (avian)', color: '#eab308' },
+    { key: findHostKey(['Cattle']), label: 'Cattle (bovine)', color: '#f59e0b' },
+    { key: findHostKey(['Human']), label: 'Human', color: '#ef4444' },
+    { key: findHostKey(['Swine']), label: 'Swine', color: '#84cc16' },
   ];
 
   const datasets = hostCategoryMap
@@ -95,7 +94,7 @@ export default function BarChart() {
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' as const, labels: { font: { size: isMobile ? 11 : 12 }, boxWidth: 12 } },
-      title: { display: true, text: 'Gene Virulence by Host Association (%)', font: { size: isMobile ? 14 : 16 } },
+      title: { display: true, text: 'Gene prevalence by host environment (%)', font: { size: isMobile ? 14 : 16 } },
       tooltip: {
         callbacks: {
           title: (items: TooltipItem<'bar'>[]) => `Gene: ${items[0].label}`,

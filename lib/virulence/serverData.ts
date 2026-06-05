@@ -9,7 +9,7 @@ const DATA_FILE = path.join(
   'public',
   'data',
   'virulence',
-  'campylobacter (1).xlsx',
+  'campylobacter.xlsx',
 );
 
 function resolvePrimarySheetName(sheetNames: string[]): string {

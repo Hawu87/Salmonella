@@ -12,24 +12,33 @@ export default function GeneProfiles() {
 
   const geneMetadata = useMemo(() => {
     const metadata: Record<string, {
-      function?: string; notes?: string; locusTag?: string; chromosomeLocation?: string;
+      function?: string;
+      knownVirulenceRole?: string;
+      notes?: string;
+      locusTag?: string;
+      chromosomeLocation?: string;
     }> = {};
     const genes = data?.genes || [];
     genes.forEach(gene => {
+      const role = gene.knownVirulenceRole?.trim();
+      const extraNotes = gene.notes?.trim();
+      const knownVirulenceRole = [role, extraNotes].filter(Boolean).join('\n\n') || undefined;
+
       if (!metadata[gene.geneName]) {
         metadata[gene.geneName] = {
           function: gene.function && gene.function !== 'Unknown' ? gene.function : undefined,
-          notes: gene.notes || undefined,
-          locusTag: gene.notes?.match(/locus[:\s]+([^\s,;]+)/i)?.[1] || gene.notes?.match(/locus tag[:\s]+([^\s,;]+)/i)?.[1] || undefined,
-          chromosomeLocation: gene.notes?.match(/chromosome[:\s]+([^\s,;]+)/i)?.[1] || gene.notes?.match(/location[:\s]+([^\s,;]+)/i)?.[1] || undefined,
+          knownVirulenceRole,
+          locusTag: gene.locusTag,
+          chromosomeLocation: gene.chromosomeLocation,
         };
       } else {
-        if (gene.notes && !metadata[gene.geneName].notes) {
-          metadata[gene.geneName].notes = gene.notes;
-          metadata[gene.geneName].locusTag = gene.notes.match(/locus[:\s]+([^\s,;]+)/i)?.[1] || metadata[gene.geneName].locusTag;
-          metadata[gene.geneName].chromosomeLocation = gene.notes.match(/chromosome[:\s]+([^\s,;]+)/i)?.[1] || metadata[gene.geneName].chromosomeLocation;
+        const entry = metadata[gene.geneName];
+        if (knownVirulenceRole && !entry.knownVirulenceRole) entry.knownVirulenceRole = knownVirulenceRole;
+        if (gene.locusTag && !entry.locusTag) entry.locusTag = gene.locusTag;
+        if (gene.chromosomeLocation && !entry.chromosomeLocation) {
+          entry.chromosomeLocation = gene.chromosomeLocation;
         }
-        if (gene.function && gene.function !== 'Unknown' && !metadata[gene.geneName].function) metadata[gene.geneName].function = gene.function;
+        if (gene.function && gene.function !== 'Unknown' && !entry.function) entry.function = gene.function;
       }
     });
     return metadata;
@@ -97,7 +106,7 @@ export default function GeneProfiles() {
         <GeneDetailsModal
           isOpen={!!selectedGene} onClose={() => setSelectedGene(null)} geneName={selectedGene}
           functionalAnnotation={geneMetadata[selectedGene]?.function}
-          knownVirulenceRole={geneMetadata[selectedGene]?.notes}
+          knownVirulenceRole={geneMetadata[selectedGene]?.knownVirulenceRole}
           locusTag={geneMetadata[selectedGene]?.locusTag}
           chromosomeLocation={geneMetadata[selectedGene]?.chromosomeLocation}
           triggerElement={triggerElementRef.current[selectedGene]}

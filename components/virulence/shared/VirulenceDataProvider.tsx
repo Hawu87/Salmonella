@@ -13,6 +13,10 @@ export interface GeneData {
   function: string;
   species: string[];
   hosts: string[];
+  regulation?: string;
+  knownVirulenceRole?: string;
+  locusTag?: string;
+  chromosomeLocation?: string;
   notes?: string;
 }
 

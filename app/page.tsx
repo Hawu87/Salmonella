@@ -15,7 +15,7 @@ const STRUCTURE_BLOCKS = [
   {
     title: "Visualizations",
     description:
-      "Interactive charts and data narratives covering virulence gene prevalence, host associations, co-occurrence networks, and cross-species comparisons.",
+      "Interactive charts and data narratives covering virulence gene prevalence, regulation in host environments (avian, bovine, human), co-occurrence networks, and cross-species comparisons.",
     href: "/visualizations",
   },
   {
@@ -40,7 +40,8 @@ export default function Home() {
           </h1>
           <p className="mt-3 text-[#6B7280] lg:text-lg max-w-2xl">
             A comparative research platform for exploring virulence biology,
-            gene expression, and host associations across bacterial pathogens.
+            gene regulation in host environments, and cross-species patterns
+            across bacterial pathogens.
           </p>
           <div className="mt-8 space-y-4 text-[#111827]">
             <p>
@@ -60,13 +61,14 @@ export default function Home() {
                   ))
                 : "the organisms in this dataset"}
               . It supports comparative analysis of virulence-associated genes
-              across species and host environments.
+              across species and regulation patterns in avian, bovine, and
+              human host environments.
             </p>
             <p>
-              Understanding how these organisms differ in their virulence
-              strategies — from invasion mechanisms to toxin production — is
-              critical for public health, food safety, and antimicrobial
-              research.
+              Understanding how virulence genes are regulated across host
+              environments — and how these organisms differ in invasion,
+              colonization, and toxin strategies — is critical for public
+              health, food safety, and antimicrobial research.
             </p>
           </div>
         </section>

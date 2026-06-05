@@ -10,6 +10,10 @@ interface GeneData {
   function: string;
   species: string[];
   hosts: string[];
+  regulation?: string;
+  knownVirulenceRole?: string;
+  locusTag?: string;
+  chromosomeLocation?: string;
   notes?: string;
 }
 
@@ -72,14 +76,48 @@ function categorizeProcess(functionName: string): string {
   return 'other';
 }
 
-function normalizeHost(host: string): string {
-  const h = host.toLowerCase().trim();
-  if (h.includes('poultry') || h.includes('chicken')) return 'Poultry';
-  if (h.includes('cattle') || h.includes('cow') || h.includes('beef')) return 'Cattle';
-  if (h.includes('swine') || h.includes('pig')) return 'Swine';
-  if (h.includes('human')) return 'Human';
-  if (h.includes('multiple') || h.includes('mixed')) return 'Multiple';
-  return host || 'Unknown';
+const DATA_FILE = path.join(process.cwd(), 'public', 'data', 'virulence', 'campylobacter.xlsx');
+
+function findColumnIndex(headers: string[], ...candidates: string[]): number {
+  for (const candidate of candidates) {
+    const idx = headers.findIndex(h => h === candidate || h.includes(candidate));
+    if (idx >= 0) return idx;
+  }
+  return -1;
+}
+
+/** Map regulation text (e.g. "avian↑↑, bovine ↑, humans ↑↑") to chart host categories. */
+function parseRegulationToHosts(regulation: string): string[] {
+  const text = regulation.trim();
+  if (!text || text.length > 200) return [];
+
+  const lower = text.toLowerCase();
+  if (
+    (lower.includes('upregulated') || lower.includes('downregulated')) &&
+    !/\b(avian|bovine|human|swine|poultry|cattle)\b/.test(lower)
+  ) {
+    return [];
+  }
+
+  const hosts = new Set<string>();
+  const segments = text.split(/[,;]/);
+
+  for (const segment of segments) {
+    const seg = segment.toLowerCase().trim();
+    if (!seg || seg.length > 100) continue;
+    if (seg.includes('upregulated') && !/\b(avian|bovine|human|swine|poultry|cattle)\b/.test(seg)) {
+      continue;
+    }
+
+    if (/\b(avian|poultry|chicken)\b/.test(seg)) hosts.add('Poultry');
+    if (/\b(bovine|cattle|cow|beef)\b/.test(seg)) hosts.add('Cattle');
+    if (/\b(swine|pig|porcine)\b/.test(seg)) hosts.add('Swine');
+    if (/\b(humans?)\b/.test(seg)) hosts.add('Human');
+  }
+
+  if (hosts.size === 0 && /\b(humans?)\b/.test(lower)) hosts.add('Human');
+
+  return [...hosts];
 }
 
 function resolvePrimaryDataSheetName(sheetNames: string[]): string {
@@ -90,7 +128,7 @@ function resolvePrimaryDataSheetName(sheetNames: string[]): string {
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'virulence', 'campylobacter (1).xlsx');
+    const filePath = DATA_FILE;
     if (!fs.existsSync(filePath)) {
       return NextResponse.json(
         { error: 'Excel file not found at public/data/virulence/' },
@@ -111,12 +149,15 @@ export async function GET() {
     const firstRow = Array.isArray(data[0]) ? data[0] : [];
     const headers = firstRow.map((h: unknown) => (h || '').toString().toLowerCase().trim());
 
-    const geneNameCol = headers.findIndex(h => h.includes('gene') || h.includes('name'));
-    const clusterCol = headers.findIndex(h => h.includes('cluster'));
-    const functionCol = headers.findIndex(h => h.includes('function') || h.includes('role'));
-    const speciesCol = headers.findIndex(h => h.includes('species'));
-    const hostCol = headers.findIndex(h => h.includes('host'));
-    const notesCol = headers.findIndex(h => h.includes('note') || h.includes('comment'));
+    const geneNameCol = findColumnIndex(headers, 'gene name');
+    const clusterCol = findColumnIndex(headers, 'cluster');
+    const functionCol = findColumnIndex(headers, 'functional annotation (ensembl)', 'functional annotation');
+    const virulenceRoleCol = findColumnIndex(headers, 'known virulence role');
+    const speciesCol = findColumnIndex(headers, 'campylobacter species', 'species');
+    const regulationCol = findColumnIndex(headers, 'regulation in host environments', 'regulation in host');
+    const notesCol = headers.findIndex(h => h === 'notes' || (h.includes('notes') && !h.includes('virulence')));
+    const locusTagCol = findColumnIndex(headers, 'locus tag');
+    const chromosomeCol = findColumnIndex(headers, 'chromosomal location', 'chromosome');
 
     const isolateMap: Record<string, Set<string>> = {};
     const genes: GeneData[] = [];
@@ -137,18 +178,32 @@ export async function GET() {
       const cluster = clusterCol >= 0 ? ((row[clusterCol] as unknown) || '').toString().trim() : undefined;
       const functionName = functionCol >= 0 ? ((row[functionCol] as unknown) || '').toString().trim() : 'Unknown';
       const speciesStr = speciesCol >= 0 ? ((row[speciesCol] as unknown) || '').toString().trim() : '';
-      const hostStr = hostCol >= 0 ? ((row[hostCol] as unknown) || '').toString().trim() : '';
-      const notes = notesCol >= 0 ? ((row[notesCol] as unknown) || '').toString().trim() : undefined;
+      const regulationStr =
+        regulationCol >= 0 ? ((row[regulationCol] as unknown) || '').toString().trim() : '';
+      const knownVirulenceRole =
+        virulenceRoleCol >= 0 ? ((row[virulenceRoleCol] as unknown) || '').toString().trim() : undefined;
+      const notesCell = notesCol >= 0 ? ((row[notesCol] as unknown) || '').toString().trim() : undefined;
+      const locusTag = locusTagCol >= 0 ? ((row[locusTagCol] as unknown) || '').toString().trim() : undefined;
+      const chromosomeLocation =
+        chromosomeCol >= 0 ? ((row[chromosomeCol] as unknown) || '').toString().trim() : undefined;
 
       const speciesKeys = parseSpeciesCellToKeys(speciesStr);
       speciesKeys.forEach(k => allSpeciesKeys.add(k));
 
-      const hosts = hostStr
-        .split(/[,;]/)
-        .map((h: string) => normalizeHost(h))
-        .filter((h: string) => h.length > 0 && h !== 'Unknown');
+      const hosts = parseRegulationToHosts(regulationStr);
 
-      genes.push({ geneName, cluster, function: functionName, species: speciesKeys, hosts, notes });
+      genes.push({
+        geneName,
+        cluster,
+        function: functionName,
+        species: speciesKeys,
+        hosts,
+        regulation: regulationStr || undefined,
+        knownVirulenceRole,
+        locusTag: locusTag || undefined,
+        chromosomeLocation: chromosomeLocation || undefined,
+        notes: notesCell || undefined,
+      });
       geneCounts[geneName] = (geneCounts[geneName] || 0) + 1;
 
       const primarySpeciesKey = speciesKeys[0] ?? 'unknown';

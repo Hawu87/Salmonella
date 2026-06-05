@@ -127,7 +127,8 @@ const SPECIES_REGISTRY: Record<string, Partial<SpeciesMeta>> = {
     fullLabel: 'Escherichia coli',
     scientificName: 'Escherichia coli',
     accent: '#8b5cf6',
-    homepageDescription: PLACEHOLDER_DESCRIPTION('Escherichia coli'),
+    homepageDescription:
+      'Included for cross-organism comparison of shared virulence-associated genes and regulation patterns alongside Campylobacter and Salmonella entries in this dataset.',
     biologySections: PLACEHOLDER_BIOLOGY('Escherichia coli'),
   },
 };
